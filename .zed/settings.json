@@ -1,0 +1,4 @@
+// Folder-specific settings
+{
+"file_scan_inclusions": ["temp/**"]
+}

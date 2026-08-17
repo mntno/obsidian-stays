@@ -1,0 +1,4 @@
+.workspace-leaf-content[data-type="stays-view-timeline"] .ec-timeline .ec-time,
+.workspace-leaf-content[data-type="stays-view-timeline"] .ec-timeline .ec-line {
+	width: 144px;
+}

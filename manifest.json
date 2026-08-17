@@ -1,0 +1,10 @@
+{
+	"id": "stays",
+	"name": "Stays",
+	"version": "0.0.1",
+	"minAppVersion": "1.13.4",
+	"description": "Book guests into rooms for specific dates.",
+	"author": "mntno",
+	"authorUrl": "https://github.com/mntno",
+	"isDesktopOnly": false
+}

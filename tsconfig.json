@@ -1,0 +1,39 @@
+{
+	"compilerOptions": {
+
+		"rootDir": "./src",
+		"paths": {
+			"#/*": ["./src/*"]
+		},
+
+		"inlineSourceMap": true,
+		"inlineSources": true,
+
+		"target": "ES2022",
+		"lib": [
+			"DOM",
+			"ES2022"
+		],
+		"types": ["node"],
+
+		"moduleResolution": "bundler",
+		"isolatedModules": true,
+		"verbatimModuleSyntax": false,
+
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"erasableSyntaxOnly": false,
+		"exactOptionalPropertyTypes": false,
+	},
+	"include": [
+		"./src/**/*.ts"
+	],
+	"exclude": [
+		"./node_modules",
+		"./dist",
+		"./build",
+		"./main.js",
+		"./eslint.config.js"
+	]
+}
