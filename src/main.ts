@@ -1,5 +1,5 @@
-import { AddBooking } from "#/booking/AddBooking";
-import { AddPerson } from "#/person/AddPerson";
+import { AddBookingModal } from "#/modals/AddBookingModal";
+import { AddPersonModal } from "#/modals/AddPersonModal";
 import { SettingsManager } from "#/settings/SettingsManager";
 import type { PluginSettings } from "#/settings/types";
 import { Icon } from "#/ui/constants";
@@ -12,76 +12,42 @@ import { ConfirmationModal, Notice, Plugin } from "obsidian";
 export default class Stays extends Plugin {
 	private settingsManager!: SettingsManager;
 
-	override async onload() {
+	public override async onload() {
 		log.t();
 
 		this.settingsManager = await this.loadSettings();
-
-		const ribbonIconEl = this.addRibbonIcon("user-plus", "Add person", () => {
-			void this.addPerson();
-		});
-		ribbonIconEl.addClass("stays-ribbon-class");
-
-		this.addCommand({
-			id: "add-person",
-			name: "Add person",
-			callback: () => {
-				void this.addPerson();
-			},
-		});
-
-		const bookingRibbonIconEl = this.addRibbonIcon("calendar-plus", "Add booking", () => {
-			void this.addBooking();
-		});
-		bookingRibbonIconEl.addClass("stays-ribbon-class");
-
-		this.addCommand({
-			id: "add-booking",
-			name: "Add booking",
-			callback: () => {
-				void this.addBooking();
-			},
-		});
-
 		this.addSettingTab(new SettingTab(this, this.settingsManager));
 
+		[
+			this.addRibbonIcon(Icon.Action.ADD_USER, "Add person", () => this.addPerson()),
+			this.addRibbonIcon(Icon.Action.ADD_BOOKING, "Add booking", () => this.addBooking()),
+			this.addRibbonIcon(Icon.View.Timeline, "Bookings timeline", () => this.openTimeline().catch(log.catch)),
+		].forEach((el) => {
+			el.addClass("stays-ribbon-class");
+		});
+
+		this.addCommand({ id: "add-person", name: "Add person", callback: () => this.addPerson() });
+		this.addCommand({ id: "add-booking", name: "Add booking", callback: () => this.addBooking() });
+		this.addCommand({ id: "open-calendar-timeline", name: "Open calendar timeline", callback: () => this.openTimeline().catch(log.catch) });
+
 		this.registerView(VIEW_TYPE_TIMELINE, (leaf) => new TimelineView(leaf, this.settingsManager));
-
-		const schedulerRibbonIconEl = this.addRibbonIcon(Icon.View.Timeline, "Bookings timeline", () => {
-			void this.openTimeline();
-		});
-		schedulerRibbonIconEl.addClass("stays-ribbon-class");
-
-		this.addCommand({
-			id: "open-guest-scheduler",
-			name: "Open guest scheduler",
-			callback: () => {
-				void this.openTimeline();
-			},
-		});
 	}
 
-	override onunload() {
+	public override onunload() {
 	}
 
-	private async addPerson(): Promise<void> {
+	private addPerson(): void {
 		const peopleFolder = this.settingsManager.settings.peopleFolder;
-		if (!Api.Folder.exists(this.app.vault, peopleFolder)) {
+		if (Api.Folder.exists(this.app.vault, peopleFolder)) {
+			new AddPersonModal(this.app, peopleFolder, (result) => {
+				if (result.error)
+					new Notice(result.error.message, 0);
+			}).open();
+		} else {
 			const modal = new ConfirmationModal(this.app);
 			modal.setContent("People folder is not set up in plugin settings.");
-			modal.addButton((btn) =>
-				btn.setButtonText("OK").setCta().onClick(() => {
-					modal.close();
-				})
-			);
+			modal.addButton((btn) => btn.setButtonText("OK").setCta().onClick(() => modal.close()));
 			modal.open();
-			return;
-		}
-		const result = await new AddPerson(this.app, peopleFolder).run();
-		if (result.didCancel) {
-			new Notice("Cancelled creating a new person.", 3000);
-		} else if (result.error) {
-			new Notice(result.error.message, 0);
 		}
 	}
 
@@ -98,7 +64,7 @@ export default class Stays extends Plugin {
 		});
 	}
 
-	private async addBooking(): Promise<void> {
+	private addBooking() {
 		const { peopleFolder, bookingsFolder } = this.settingsManager.settings;
 		const peopleExists = Api.Folder.exists(this.app.vault, peopleFolder);
 		const bookingsExists = Api.Folder.exists(this.app.vault, bookingsFolder);
@@ -108,23 +74,13 @@ export default class Stays extends Plugin {
 				.join(" and ");
 			const modal = new ConfirmationModal(this.app);
 			modal.setContent(`${missing} folder is not set up in plugin settings.`);
-			modal.addButton((btn) =>
-				btn.setButtonText("OK").setCta().onClick(() => {
-					modal.close();
-				})
-			);
+			modal.addButton((btn) => btn.setButtonText("OK").setCta().onClick(() => modal.close()));
 			modal.open();
-			return;
-		}
-		const result = await new AddBooking(
-			this.app,
-			peopleFolder,
-			bookingsFolder,
-		).run();
-		if (result.didCancel) {
-			new Notice("Cancelled creating a new booking.", 3000);
-		} else if (result.error) {
-			new Notice(result.error.message, 0);
+		} else {
+			new AddBookingModal(this.app, peopleFolder, bookingsFolder, (result) => {
+				if (result.error)
+					new Notice(result.error.message, 0);
+			}).open();
 		}
 	}
 

@@ -6,6 +6,8 @@ export const Icon = {
 
 	Action: {
 		ADD: "plus",
+		ADD_USER: "user-plus",
+		ADD_BOOKING: "calendar-plus",
 		EDIT: "pencil",
 		DELETE: "trash",
 		COPY: "copy",

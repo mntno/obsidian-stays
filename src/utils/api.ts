@@ -1,4 +1,4 @@
-import { apiVersion, App, normalizePath, TFolder, Vault } from "obsidian";
+import { apiVersion, App, normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 
 
 export const Api = {
@@ -7,6 +7,13 @@ export const Api = {
 
 	App: {
 		is: (app: unknown): app is App => app instanceof App,
+	},
+
+	File: {
+    is: (file: unknown): file is TFile => file instanceof TFile,
+		isMarkdown: (file: TAbstractFile): file is TFile => Api.File.is(file) && file.extension === "md",
+    get: (vault: Vault, path: string): TFile | null => vault.getFileByPath(path),
+		exists: (vault: Vault, path: string): boolean => Api.File.get(vault, path) !== null,
 	},
 
 	Folder: {
@@ -25,6 +32,11 @@ export const Api = {
 			const folder = Api.Folder.get(vault, path);
 			return folder !== null ? folder.children.filter(Api.Folder.is) : [];
 		},
+	},
+
+	Frontmatter: {
+		update: (app: App, file: TFile, fn: (fm: Record<string, unknown>) => void): Promise<void> =>
+			app.fileManager.processFrontMatter(file, fn),
 	},
 
 };

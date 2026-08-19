@@ -4,7 +4,7 @@ export const Bln = {
 	isTrue: (value: unknown): value is boolean => Bln.is(value) && value === true,
 	/** @returns `true` if {@link value} is a `boolean` and its value is `false`. */
 	isFalse: (value: unknown): value is boolean => Bln.is(value) && value === false,
-};
+} as const;
 
 export const Str = {
 	empty: "",
@@ -46,4 +46,4 @@ export const Str = {
 		* @returns The trimmed string if non-empty, else `undefined`.
 		*/
 	trimmedNonEmpty: (value: unknown): string | undefined => Str.is(value) ? Str.nonEmpty(value.trim()) : undefined,
-};
+} as const;

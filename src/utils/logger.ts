@@ -21,7 +21,7 @@ const CATEGORY_CONFIG = {
 		level: "trace",
 	},
 
-	cat2: {
+	view: {
 		enabled: true,
 		level: "trace",
 	},
@@ -118,7 +118,7 @@ export const log = {
 	catch: realConsole.error,
 
 	setting: CategoryLogger.create("setting"),
-	cat2: CategoryLogger.create("cat2"),
+	view: CategoryLogger.create("view"),
 
 	tab: Str.tab,
 	lfTab: Str.lf + Str.tab,

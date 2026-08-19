@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
 import { createBookingNote, deriveRoomCode, formatDateOnly } from "#/booking/BookingNote";
 import type { AddBookingResult, BookingInfo } from "#/booking/types";
+import { describe, expect, it } from "vitest";
 
 const baseBookingInfo: BookingInfo = {
 	personName: "Omar Jenson",
@@ -13,7 +13,6 @@ const baseBookingInfo: BookingInfo = {
 
 function sampleResult(overrides: Partial<AddBookingResult> = {}): AddBookingResult {
 	return {
-		didCancel: false,
 		bookingInfo: { ...baseBookingInfo },
 		roomName: "East Wing 1",
 		...overrides,

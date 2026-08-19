@@ -16,7 +16,6 @@ export interface BookingInfo {
 }
 
 export interface AddBookingResult {
-	didCancel: boolean;
 	error?: Error;
 	bookingInfo?: BookingInfo;
 	/** The room folder name. */

@@ -16,7 +16,6 @@ export interface Contact {
 }
 
 export interface AddPersonResult {
-	didCancel: boolean;
 	error?: Error;
 	personalInfo?: PersonalInfo;
 	/** `null` when the address prompt was skipped or cancelled. */
