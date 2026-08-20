@@ -1,8 +1,8 @@
 import { App, MarkdownView, Modal, Setting, TextComponent, ButtonComponent, type TFile, type TFolder } from "obsidian";
 import type { AddBookingResult, BookingInfo } from "#/booking/types";
-import { createBookingNote, deriveRoomCode, formatDateOnly } from "#/booking/BookingNote";
+import { createBookingNote, derivePlaceCode, formatDateOnly } from "#/booking/BookingNote";
 import { PersonSuggest } from "#/ui/PersonSuggest";
-import { RoomSuggest } from "#/ui/RoomSuggest";
+import { PlaceSuggest } from "#/ui/PlaceSuggest";
 import { Str } from "#/utils/ts";
 import { log } from "#/utils/logger";
 
@@ -11,7 +11,7 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export class AddBookingModal extends Modal {
 
 	private selectedPersonFile: TFile | null = null;
-	private selectedRoomFolder: TFolder | null = null;
+	private selectedPlaceFolder: TFolder | null = null;
 	private personName: string = Str.empty;
 	private titleManuallyEdited = false;
 	private ignoreOnChange = false;
@@ -61,16 +61,16 @@ export class AddBookingModal extends Modal {
 			});
 
 		new Setting(this.contentEl)
-			.setName("Room")
+			.setName("Place")
 			.addText((text) => {
-				text.setPlaceholder("Search room...");
-				new RoomSuggest(this.app, text.inputEl, this.bookingsFolder, (folder) => {
-					this.selectedRoomFolder = folder;
+				text.setPlaceholder("Search place...");
+				new PlaceSuggest(this.app, text.inputEl, this.bookingsFolder, (folder) => {
+					this.selectedPlaceFolder = folder;
 					this.updateTitle();
 					this.updateCreateButtonState();
 				});
 				text.onChange(() => {
-					this.selectedRoomFolder = null;
+					this.selectedPlaceFolder = null;
 					this.updateTitle();
 					this.updateCreateButtonState();
 				});
@@ -158,11 +158,11 @@ export class AddBookingModal extends Modal {
 	}
 
 	private async handleSubmit() {
-		if (!this.selectedPersonFile || !this.selectedRoomFolder)
+		if (!this.selectedPersonFile || !this.selectedPlaceFolder)
 			return;
 
 		const personName = this.personName;
-		const roomName = this.selectedRoomFolder.name;
+		const placeName = this.selectedPlaceFolder.name;
 
 		const startDateStr = this.startDateComponent.getValue();
 		if (!Str.isNonEmpty(startDateStr) || !this.validateDate(startDateStr))
@@ -186,7 +186,7 @@ export class AddBookingModal extends Modal {
 			return;
 
 		const trimmedTitle = Str.trimmedNonEmpty(this.titleComponent.getValue());
-		const title = trimmedTitle !== undefined ? trimmedTitle : `${personName} (${deriveRoomCode(roomName)})`;
+		const title = trimmedTitle !== undefined ? trimmedTitle : `${personName} (${derivePlaceCode(placeName)})`;
 
 		const bookingInfo: BookingInfo = {
 			personName,
@@ -199,13 +199,13 @@ export class AddBookingModal extends Modal {
 
 		const result: AddBookingResult = {
 			bookingInfo,
-			roomName,
-			roomFolder: this.selectedRoomFolder,
+			placeName,
+			placeFolder: this.selectedPlaceFolder,
 		};
 
-		const file = await createBookingNote(this.app, this.bookingsFolder, roomName, result);
+		const file = await createBookingNote(this.app, this.bookingsFolder, placeName, result);
 		if (!file) {
-			result.error = new Error(`A booking for "${personName}" on "${startDateStr}" already exists in ${roomName}.`);
+			result.error = new Error(`A booking for "${personName}" on "${startDateStr}" already exists in ${placeName}.`);
 		} else {
 			this.openBookingNote(file);
 		}
@@ -215,11 +215,11 @@ export class AddBookingModal extends Modal {
 	}
 
 	private updateTitle() {
-		if (this.titleManuallyEdited || !this.selectedRoomFolder || !Str.isNonEmpty(this.personName))
+		if (this.titleManuallyEdited || !this.selectedPlaceFolder || !Str.isNonEmpty(this.personName))
 			return;
-		const roomCode = deriveRoomCode(this.selectedRoomFolder.name);
+		const placeCode = derivePlaceCode(this.selectedPlaceFolder.name);
 		this.ignoreOnChange = true;
-		this.titleComponent.setValue(`${this.personName} (${roomCode})`);
+		this.titleComponent.setValue(`${this.personName} (${placeCode})`);
 		this.ignoreOnChange = false;
 		this.titleManuallyEdited = false;
 	}
@@ -228,7 +228,7 @@ export class AddBookingModal extends Modal {
 		const hasValidStartDate = Str.isNonEmpty(this.startDateComponent.getValue()) && this.validateDate(this.startDateComponent.getValue());
 		const hasValidEndDate = this.isEndDateValid();
 		const hasTitle = Str.isTrimmedNonEmpty(this.titleComponent.getValue());
-		this.createButtonComponent.setDisabled(!(this.selectedPersonFile && this.selectedRoomFolder && hasValidStartDate && hasValidEndDate && hasTitle));
+		this.createButtonComponent.setDisabled(!(this.selectedPersonFile && this.selectedPlaceFolder && hasValidStartDate && hasValidEndDate && hasTitle));
 	}
 
 	private isEndDateValid(): boolean {

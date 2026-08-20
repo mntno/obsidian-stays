@@ -1,4 +1,4 @@
-import { createBookingNote, deriveRoomCode, formatDateOnly } from "#/booking/BookingNote";
+import { createBookingNote, derivePlaceCode, formatDateOnly } from "#/booking/BookingNote";
 import type { AddBookingResult, BookingInfo } from "#/booking/types";
 import { describe, expect, it } from "vitest";
 
@@ -14,24 +14,24 @@ const baseBookingInfo: BookingInfo = {
 function sampleResult(overrides: Partial<AddBookingResult> = {}): AddBookingResult {
 	return {
 		bookingInfo: { ...baseBookingInfo },
-		roomName: "East Wing 1",
+		placeName: "East Wing 1",
 		...overrides,
 	};
 }
 
-describe("deriveRoomCode", () => {
-	it("derives multi-word room codes", () => {
-		expect(deriveRoomCode("East Wing 1")).toBe("EW1");
-		expect(deriveRoomCode("North Lodge 1")).toBe("NL1");
-		expect(deriveRoomCode("South Villa 1")).toBe("SV1");
+describe("derivePlaceCode", () => {
+	it("derives multi-word place codes", () => {
+		expect(derivePlaceCode("East Wing 1")).toBe("EW1");
+		expect(derivePlaceCode("North Lodge 1")).toBe("NL1");
+		expect(derivePlaceCode("South Villa 1")).toBe("SV1");
 	});
 
-	it("derives two-word room codes", () => {
-		expect(deriveRoomCode("West Suite")).toBe("WS");
+	it("derives two-word place codes", () => {
+		expect(derivePlaceCode("West Suite")).toBe("WS");
 	});
 
-	it("derives single-word room codes", () => {
-		expect(deriveRoomCode("Garden Annex")).toBe("GA");
+	it("derives single-word place codes", () => {
+		expect(derivePlaceCode("Garden Annex")).toBe("GA");
 	});
 });
 

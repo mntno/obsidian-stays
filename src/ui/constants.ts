@@ -2,7 +2,7 @@ export const PLUGIN_NAME = "Stays";
 export const PLUGIN_MENY_SECTION = "stays";
 
 export const Icon = {
-	Main: "birdhouse",
+	Main: "tent",
 
 	Action: {
 		ADD: "plus",

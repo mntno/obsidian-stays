@@ -1,28 +1,28 @@
 import { Api } from "#/utils/api";
 import { AbstractInputSuggest, App, TFolder } from "obsidian";
 
-export class RoomSuggest extends AbstractInputSuggest<TFolder> {
-	private rooms: TFolder[] = [];
+export class PlaceSuggest extends AbstractInputSuggest<TFolder> {
+	private places: TFolder[] = [];
 	private readonly inputEl: HTMLInputElement;
 	private readonly bookingsFolder: string;
-	private readonly onRoomSelected: (folder: TFolder) => void;
+	private readonly onPlaceSelected: (folder: TFolder) => void;
 
 	public constructor(
 		app: App,
 		inputEl: HTMLInputElement,
 		bookingsFolder: string,
-		onRoomSelected: (folder: TFolder) => void,
+		onPlaceSelected: (folder: TFolder) => void,
 	) {
 		super(app, inputEl);
 		this.inputEl = inputEl;
 		this.bookingsFolder = bookingsFolder;
-		this.onRoomSelected = onRoomSelected;
-		this.loadRooms();
+		this.onPlaceSelected = onPlaceSelected;
+		this.loadPlaces();
 	}
 
 	public getSuggestions(query: string): TFolder[] {
 		const lower = query.toLowerCase();
-		return this.rooms.filter((r) => r.name.toLowerCase().contains(lower));
+		return this.places.filter((p) => p.name.toLowerCase().contains(lower));
 	}
 
 	public renderSuggestion(folder: TFolder, el: HTMLElement): void {
@@ -32,12 +32,12 @@ export class RoomSuggest extends AbstractInputSuggest<TFolder> {
 	public override selectSuggestion(folder: TFolder): void {
 		this.inputEl.value = folder.name;
 		this.inputEl.trigger("input");
-		this.onRoomSelected(folder);
+		this.onPlaceSelected(folder);
 		this.close();
 	}
 
-	private loadRooms(): void {
-		this.rooms = Api.Folder.getChildren(this.app.vault, this.bookingsFolder)
+	private loadPlaces(): void {
+		this.places = Api.Folder.getChildren(this.app.vault, this.bookingsFolder)
 			.sort((a, b) => a.name.localeCompare(b.name));
 	}
 }

@@ -1,4 +1,33 @@
-.workspace-leaf-content[data-type="stays-view-timeline"] .ec-timeline .ec-time,
-.workspace-leaf-content[data-type="stays-view-timeline"] .ec-timeline .ec-line {
-	width: 144px;
+/* --stays-event-gap is published from TimelineView.ts (EVENT_GAP_REM) */
+.workspace-leaf-content[data-type="stays-view-timeline"] {
+	/* Respond to the timeline's own width rather than the device's, so
+	   narrow desktop split panes behave like mobile */
+	container: stays-timeline / inline-size;
+
+	/* Room-name column: cap at the item level so the library's own
+	   max-content track hugs short names and stops growing at the cap,
+	   making long names wrap. Track-level fit-content()/minmax() cannot be
+	   used here: .ec-main never has positive free space, and .ec-sidebar's
+	   overflow:clip zeroes the item's automatic minimum. */
+	& .ec-sidebar {
+		max-inline-size: 9rem;
+		text-align: start;
+	}
+
+	/* Narrow timelines get a tighter name column */
+	@container stays-timeline (max-width: 640px) {
+		& .ec-sidebar {
+			max-inline-size: 6rem;
+		}
+	}
+
+	/* Gap between the row text and its borders, matching the event gaps */
+	& .ec-row-head {
+		padding-block: var(--stays-event-gap);
+	}
+
+	/* Gap between stacked booking bars' spacing and below the lowest bar */
+	& .ec-event {
+		margin-block-end: var(--stays-event-gap);
+	}
 }

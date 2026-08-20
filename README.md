@@ -1,6 +1,6 @@
 # Stays
 
-Book guests into rooms for specific dates.
+Book guest stays for specific dates.
 
 ## Dependencies
 
@@ -20,4 +20,4 @@ All actions are accessible via the Command Palette (`Ctrl/Cmd + Shift + P`).
 | Command | Description |
 | --- | --- |
 | `Add Person` | Create a new person |
-| `Add Booking` | Assign a person to a room for a date range |
+| `Add Booking` | Assign a person to a place for a date range |

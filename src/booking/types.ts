@@ -18,8 +18,8 @@ export interface BookingInfo {
 export interface AddBookingResult {
 	error?: Error;
 	bookingInfo?: BookingInfo;
-	/** The room folder name. */
-	roomName?: string;
-	/** The room folder object. */
-	roomFolder?: TFolder;
+	/** The place folder name. */
+	placeName?: string;
+	/** The place folder object. */
+	placeFolder?: TFolder;
 }

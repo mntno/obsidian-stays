@@ -147,11 +147,11 @@ export class SettingTab extends PluginSettingTab {
 		update();
 	}
 
-	override getControlValue(key: string): unknown {
+	public override getControlValue(key: string): unknown {
 		return (this.settingsManager.settings as unknown as Record<string, unknown>)[key];
 	}
 
-	override async setControlValue(key: string, value: unknown): Promise<void> {
+	public override async setControlValue(key: string, value: unknown): Promise<void> {
 		(this.settingsManager.settings as unknown as Record<string, unknown>)[key] =
 			Str.is(value) ? value.trim() : value;
 		await this.settingsManager.save();

@@ -5,8 +5,8 @@ import type { AddBookingResult } from "#/booking/types";
 
 const QUERIES_MD_PATH = "Assets/Datacore/Queries.md";
 
-export function deriveRoomCode(roomName: string): string {
-	return roomName.split(" ").map((w) => w[0]).join("").toUpperCase();
+export function derivePlaceCode(placeName: string): string {
+	return placeName.split(" ").map((w) => w[0]).join("").toUpperCase();
 }
 
 export function formatDateOnly(date: Date): string {
@@ -15,8 +15,8 @@ export function formatDateOnly(date: Date): string {
 }
 
 function buildFrontmatter(result: AddBookingResult, created: Date = new Date()): Record<string, unknown> {
-	const { bookingInfo, roomName } = result;
-	if (!bookingInfo || !roomName)
+	const { bookingInfo, placeName } = result;
+	if (!bookingInfo || !placeName)
 		throw new Error("Missing booking info to build the booking note.");
 
 	return {
@@ -70,17 +70,17 @@ function bookingFileName(result: AddBookingResult): string {
 	return `${formatDateOnly(bookingInfo.date)} ${bookingInfo.personName}.md`;
 }
 
-function bookingNotePath(bookingsFolder: string, roomName: string, result: AddBookingResult): string {
-	return `${bookingsFolder}/${roomName}/${bookingFileName(result)}`;
+function bookingNotePath(bookingsFolder: string, placeName: string, result: AddBookingResult): string {
+	return `${bookingsFolder}/${placeName}/${bookingFileName(result)}`;
 }
 
 export async function createBookingNote(
 	app: App,
 	bookingsFolder: string,
-	roomName: string,
+	placeName: string,
 	result: AddBookingResult,
 ): Promise<TFile | null> {
-	const path = bookingNotePath(bookingsFolder, roomName, result);
+	const path = bookingNotePath(bookingsFolder, placeName, result);
 	if (app.vault.getAbstractFileByPath(path)) {
 		return null;
 	}
